@@ -1,5 +1,6 @@
 import cairo
-from util import mm_to_pt
+import util
+import math
 
 PAPER_SIZES = {
     "4A0": (1682, 2378),
@@ -115,13 +116,3 @@ class CairoTiler:
                     self.draw_alignment_mark(ctx, lr, rotation=math.pi/2, flipy=True)
                 #ctx.translate(util.mm_to_pt(xoff), util.mm_to_pt(yoff))
                 ctx.show_page()
-        
-        if self.overview:
-            scalex = self.size[0] / (self.paper_size[0] - (self.margins[0] + self.margins[2]))
-            scaley = self.size[1] / (self.paper_size[1] - (self.margins[1] + self.margins[3]))
-            ctx.translate(self.margins[2] * scalex, self.margins[1] * scaley)
-            ctx.scale(1/scalex, 1/scaley)
-            self.pattern.set_matrix(cairo.Matrix())
-            ctx.set_source(self.pattern)
-            ctx.paint()
-            ctx.show_page()
