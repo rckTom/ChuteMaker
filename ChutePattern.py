@@ -102,8 +102,11 @@ class ChutePattern:
             if l.length <= 0.001:
                 print(l)
                 continue
-            ol = l.parallel_offset(seam_allowance[i], "right")
-            coord = list(ol.coords[::-1])
+            if seam_allowance[i] > 0:
+                ol = l.parallel_offset(seam_allowance[i], "right")
+                coord = list(ol.coords[::-1])
+            else:
+                coord = list(l.coords)
             coords.extend(coord)
 
         return spg.Polygon(coords)
@@ -130,13 +133,10 @@ class ChutePattern:
         if self.joint_style == MitreType.none:
             if self.seam_allowance[0] > 0:
                 polygon = self.add_seamallowance(polygon, line_right, self.seam_allowance[0])
-
             if self.seam_allowance[1] > 0:
                 polygon = self.add_seamallowance(polygon, line_top, self.seam_allowance[1])
-
             if self.seam_allowance[2] > 0:
                 polygon = self.add_seamallowance(polygon, line_left, self.seam_allowance[2])
-
             if self.seam_allowance[3] > 0:
                 polygon = self.add_seamallowance(polygon, line_bottom, self.seam_allowance[3])
         elif len(set(self.seam_allowance)) == 1:
@@ -154,20 +154,18 @@ class ChutePattern:
         elif self.joint_style == MitreType.miter:
             print("ERROR: joint style \"miter\" not supported for non uniform seam allowance. Please use bevel or none")
 
-
-
         u,l = polygon.exterior.xy
 
         u = np.array(u)
         l = np.array(l)
 
         margins = (10, 10, 10, 10)
+        l = l * -1
+        li = li * -1
+
         pattern_extend = (np.min(u), np.min(l), np.max(u), np.max(l))
         pattern_width = pattern_extend[2] - pattern_extend[0]
         pattern_height = pattern_extend[3] - pattern_extend[1]
-
-        l = l * -1 + pattern_height
-        li = li * -1 + pattern_height
 
         document_width = pattern_width + margins[0] + margins[1]
         document_height = pattern_height + margins[2] + margins[3]
@@ -183,7 +181,7 @@ class ChutePattern:
             draw_grid(ctx, (0,0), 10, 1, document_height, document_width)
 
         #draw seam allowance
-        ctx.translate(document_width/2, 0)
+        ctx.translate(document_width/2, -pattern_extend[1] + (document_height/2 - pattern_height/2))
         ctx.move_to(u[0], l[0])
         for x,y in zip(u, l):
             ctx.line_to(x, y)
