@@ -173,6 +173,8 @@ class ChutePattern:
         surface = cairo.RecordingSurface(cairo.CONTENT_COLOR_ALPHA, cairo.Rectangle(0, 0, mm_to_pt(document_width), mm_to_pt(document_height)))
         ctx = cairo.Context(surface)
         ctx.save()
+        ctx.set_line_join(cairo.LINE_JOIN_ROUND)
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
         ctx.push_group()
         ctx.scale(mm_to_pt(1), mm_to_pt(1))
         ctx.save()
@@ -181,7 +183,8 @@ class ChutePattern:
             draw_grid(ctx, (0,0), 10, 1, document_height, document_width)
 
         #draw seam allowance
-        ctx.translate(document_width/2, -pattern_extend[1] + (document_height/2 - pattern_height/2))
+        ctx.translate(-pattern_extend[0] + (document_width/2 - pattern_width/2),
+                      -pattern_extend[1] + (document_height/2 - pattern_height/2))
         ctx.move_to(u[0], l[0])
         for x,y in zip(u, l):
             ctx.line_to(x, y)

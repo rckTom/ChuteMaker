@@ -3,7 +3,6 @@ import argparse
 import math
 
 import cairo
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.lib.polynomial import poly
 
