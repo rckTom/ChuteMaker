@@ -1,6 +1,7 @@
 from scipy import integrate
 from ChutePattern import ChutePattern, MitreType
 import numpy as np
+import math
 
 class EllipticChutePattern(ChutePattern):
     def __init__(self, diameter, num_panels, e, tangent_lines=True, line_length = None, spill_hole_diameter = None, grid=True, seam_allowance=(10,10,10,10)):
