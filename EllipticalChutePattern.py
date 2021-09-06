@@ -1,9 +1,9 @@
 from scipy import integrate
-from ChutePattern import ChutePattern
+from ChutePattern import ChutePattern, MitreType
 import numpy as np
 
 class EllipticChutePattern(ChutePattern):
-    def __init__(self, diameter, num_panels, e, tangent_lines=True, line_length = None, spill_hole_diameter = None, grid=True):
+    def __init__(self, diameter, num_panels, e, tangent_lines=True, line_length = None, spill_hole_diameter = None, grid=True, seam_allowance=(10,10,10,10)):
         self.diameter = diameter
         self.radius = diameter/2
         self.num_panels = num_panels
@@ -19,7 +19,7 @@ class EllipticChutePattern(ChutePattern):
         else:
             self.line_length = line_length
 
-        super().__init__(grid)
+        super().__init__(grid, seam_allowance)
 
     def _elliptic_x(self, t):
         return self.radius * math.cos(t)

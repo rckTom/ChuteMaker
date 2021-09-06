@@ -1,7 +1,8 @@
 import cairo
 import shapely.geometry as spg
-import shapely.ops as spo
+from shapely.geometry.base import JOIN_STYLE
 import numpy as np
+import enum
 from util import mm_to_pt
 
 def draw_grid(ctx, offset, major_tick, minor_tick, height, width):
@@ -61,10 +62,21 @@ def draw_grid(ctx, offset, major_tick, minor_tick, height, width):
     
     ctx.restore()
 
+class MitreType(enum.Enum):
+    none=0
+    bevel=1
+    miter=2
+    round=3
+
+
 class ChutePattern:
     def __init__(self, grid, seam_allowance=(10,10,10,10)):
         self.grid = grid
         self.seam_allowance=seam_allowance
+        self.joint_style = MitreType.none
+
+    def set_joint_style(self, joint_style):
+        self.joint_style = joint_style
 
     def set_grid(self, grid):
         self.grid = grid
@@ -82,6 +94,19 @@ class ChutePattern:
         coord.extend(coord1)
         seam = spg.Polygon(coord)
         return polygon.union(seam)
+
+    def add_seamallowance_bevel(self, lines, seam_allowance):
+        coords = list()
+
+        for i,l in enumerate(lines):
+            if l.length <= 0.001:
+                print(l)
+                continue
+            ol = l.parallel_offset(seam_allowance[i], "right")
+            coord = list(ol.coords[::-1])
+            coords.extend(coord)
+
+        return spg.Polygon(coords)
 
     def get_pattern(self):
         pattern_lines = self._get_pattern_path()
@@ -102,23 +127,40 @@ class ChutePattern:
         ui = np.array(ui)
         li = np.array(li)
 
-        if self.seam_allowance[0] > 0:
-            polygon = self.add_seamallowance(polygon, line_right, self.seam_allowance[0])
+        if self.joint_style == MitreType.none:
+            if self.seam_allowance[0] > 0:
+                polygon = self.add_seamallowance(polygon, line_right, self.seam_allowance[0])
 
-        if self.seam_allowance[1] > 0:
-            polygon = self.add_seamallowance(polygon, line_top, self.seam_allowance[1])
+            if self.seam_allowance[1] > 0:
+                polygon = self.add_seamallowance(polygon, line_top, self.seam_allowance[1])
 
-        if self.seam_allowance[2] > 0:
-            polygon = self.add_seamallowance(polygon, line_left, self.seam_allowance[2])
+            if self.seam_allowance[2] > 0:
+                polygon = self.add_seamallowance(polygon, line_left, self.seam_allowance[2])
 
-        if self.seam_allowance[3] > 0:
-            polygon = self.add_seamallowance(polygon, line_bottom, self.seam_allowance[3])
+            if self.seam_allowance[3] > 0:
+                polygon = self.add_seamallowance(polygon, line_bottom, self.seam_allowance[3])
+        elif len(set(self.seam_allowance)) == 1:
+            if self.joint_style == MitreType.miter:
+                jt = JOIN_STYLE.mitre
+            elif self.joint_style == MitreType.bevel:
+                jt = JOIN_STYLE.bevel
+            elif self.joint_style == MitreType.round:
+                jt = JOIN_STYLE.round
+            polygon = polygon.buffer(self.seam_allowance[0], join_style=jt, mitre_limit=2)
+        elif self.joint_style == MitreType.bevel:
+            polygon = self.add_seamallowance_bevel([line_right, line_top, line_left, line_bottom], self.seam_allowance)
+        elif self.joint_style == MitreType.round:
+            print("ERROR: joint style \"round\" not supported for non uniform seam allowance. Please use bevel or none")
+        elif self.joint_style == MitreType.miter:
+            print("ERROR: joint style \"miter\" not supported for non uniform seam allowance. Please use bevel or none")
+
+
 
         u,l = polygon.exterior.xy
 
         u = np.array(u)
         l = np.array(l)
-        
+
         margins = (10, 10, 10, 10)
         pattern_extend = (np.min(u), np.min(l), np.max(u), np.max(l))
         pattern_width = pattern_extend[2] - pattern_extend[0]

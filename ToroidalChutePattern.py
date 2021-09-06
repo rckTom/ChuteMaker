@@ -5,14 +5,14 @@ import scipy.integrate as integrate
 from ChutePattern import ChutePattern
 
 class ToroidalChutePattern(ChutePattern):
-    def __init__(self, diameter, num_panels, e, tangent_lines=True, line_length = None, spill_hole_diameter = 0, grid=True):
+    def __init__(self, diameter, num_panels, e, tangent_lines=True, line_length = None, spill_hole_diameter = 0, grid=True, seam_allowance=(10,10,10,10)):
         self.line_length = line_length
         self.r = diameter/4 * e
         self.rt = diameter/2 - self.r
         self.rs = spill_hole_diameter/2
         self.num_panels = num_panels
         self.tangent_lines = tangent_lines
-        super().__init__(grid)
+        super().__init__(grid, seam_allowance)
 
     def _t(self, x):
         return math.acos((x-self.rt)/self.r)

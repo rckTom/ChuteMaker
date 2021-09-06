@@ -1,3 +1,4 @@
+from ChutePattern import MitreType
 import argparse
 import math
 
@@ -14,7 +15,7 @@ from CairoTiler import CairoTiler, PAPER_SIZES
 def main(chute, args):
     pattern, size = chute.get_pattern()
 
-    surface = cairo.RecordingSurface(cairo.CONTENT_COLOR_ALPHA, cairo.Rectangle(0, 0, util.mm_to_pt(size[0]), util.mm_to_pt(size[1])))    
+    surface = cairo.RecordingSurface(cairo.CONTENT_COLOR_ALPHA, cairo.Rectangle(0, 0, util.mm_to_pt(size[0]), util.mm_to_pt(size[1])))
     ctx = cairo.Context(surface)
     ctx.push_group()
     ctx.set_source(pattern)
@@ -49,7 +50,9 @@ def spherical(args):
                                  True,
                                  args.line_length if args.line_length else 2*args.diameter,
                                  args.spill_diameter if args.spill_diameter is not None else 0.1*args.diameter,
-                                 args.grid)
+                                 args.grid,
+                                 args.seam_allowance)
+    chute.set_joint_style(MitreType[args.joint_style])
     main(chute, args)
 
 def toroidal(args):
@@ -59,17 +62,21 @@ def toroidal(args):
                                  True,
                                  args.line_length if args.line_length else 2*args.diameter,
                                  args.spill_diameter,
-                                 args.grid)
+                                 args.grid,
+                                 args.seam_allowance)
+    chute.set_joint_style(MitreType[args.joint_style])
     main(chute, args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("output")
-    parser.add_argument("--paper_size")
-    parser.add_argument("--panels", "-p", type=int, default=8)
-    parser.add_argument("--grid", "-g", action="store_true")
-    parser.add_argument("--typ", choices=["svg", "pdf"], default="pdf")
-    subparser = parser.add_subparsers()
+    parser = argparse.ArgumentParser(description="Generate gore patterns for spherical and toroidal parachutes. All dimensions are in mm")
+    parser.add_argument("--paper_size", help="If specified, split pattern into multiple pages of specified size")
+    parser.add_argument("--panels", "-p", type=int, default=8, help="Number of circumferential panels")
+    parser.add_argument("--grid", "-g", action="store_true", help="Plot a grid")
+    parser.add_argument("--typ", choices=["svg", "pdf"], default="pdf", help="Output file format")
+    parser.add_argument("--joint_style", choices=["bevel", "miter", "none", "box"], default="none")
+    parser.add_argument("--seam_allowance", type=str, default = "10", help="Length to offset gore pattern. Either specify a single value or a list of values for RIGHT,TOP,LEFT,BOTTOM edges")
+
+    subparser = parser.add_subparsers(title="Chute Types")
 
     sub_sphere = subparser.add_parser("spherical")
     sub_sphere.add_argument("--diameter", "-d", type = float, required=True)
@@ -86,5 +93,17 @@ if __name__ == "__main__":
     sub_toroidal.add_argument("--line_length", "-l", help="Line length. Default = 2 x diameter")
     sub_toroidal.add_argument("--spill_diameter", "-s", type=float)
     sub_toroidal.set_defaults(func=toroidal)
+
+    parser.add_argument("output")
     args = parser.parse_args()
+
+    seam_allowance = list()
+    for e in args.seam_allowance.split(","):
+        seam_allowance.append(int(e))
+    args.seam_allowance = seam_allowance
+
+    if len(args.seam_allowance) == 1:
+        sa = args.seam_allowance[0]
+        args.seam_allowance = [sa, sa, sa, sa]
+
     args.func(args)
