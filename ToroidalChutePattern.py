@@ -30,18 +30,25 @@ class ToroidalChutePattern(ChutePattern):
         x = l*(l*rt + r*math.sqrt(l**2 + r**2 - rt**2))/(l**2 + r**2)
         return self._t(x)
 
-    def _get_pattern_path(self):
+    def get_spill_diameter(self):
         minx = self.rt - self.r
 
         if (minx > self.rs):
-            self.rs = minx
+            rs = minx
             print("WARNING: spill hole to small. Extend it to minimal possible size")
         elif (self.rs >= self.rt):
             print("WARNING: spill hole diameter to large. Scaling it down")
-            self.rs = self.rt
+            rs = self.rt
+        else:
+            rs = self.rs
+        
+        return rs
+
+    def _get_pattern_path(self):
+        rs = self.get_spill_diameter()
 
         tmin = -self._tangential_line_point()
-        tmax = self._t(self.rs)
+        tmax = self._t(rs)
         n = 100
 
         ts = np.linspace(tmin, tmax, n)

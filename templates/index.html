@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<!-- MultiStep Form -->
+
+<head>
+  <link href="static/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="static/css/chutemaker.css" rel="stylesheet" />
+  <script src="static/js/jquery-3.6.0.min.js" type="text/javascript"></script>
+  <script src="static/js/chutemaker.js" type="text/javascript"></script>
+</head>
+
+<body class="bg-light">
+  <div class="container">
+    <main class="row justify-content-center">
+      <div class="col-lg-8 col-md-7 col-12 justify-content-center">
+        <h4 class="mb-3">Hemispherical Chute</h4>
+        <form class="needs-validation" action="/spherical" method="post">
+          <div class="row g-3">
+            <div class="col-sm-12 col-lg-12">
+              <label for="sphericalDiameter" class="form-label">Diameter</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="sphericalDiameter" name="diameter" required>
+                <div class="input-group-append">
+                  <div class="input-group-text">mm</div>
+                </div>
+                <div class="invalid-feedback">
+                  Diameter is required
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-12 col-lg-12">
+              <label for="sphericalSpillDiameter" class="form-label">Spill hole diameter</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="sphericalSpillDiameter" name="spillDiameter" required>
+                <div class="input-group-append">
+                  <div class="input-group-text">mm</div>
+                </div>
+                <div class="invalid-feedback">Spill diameter is required</div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="sphericalExcentricity" class="form-label">Excentricity</label>
+              <div class="input-group has-validation">
+                <input type="number" class="form-control" id="sphericalExcentricity" name="e" placeholder="" value="0.7"
+                  required>
+                <div class="invalid-feedback">
+                  Excentricity is required.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="numPanels" class="form-label">Number of panels</label>
+              <div class="input-group has-validation">
+                <input type="number" class="form-control" id="numPanels" name="panels" value="8" min="1">
+                <div class="invalid-feedback">
+                  Specify the number of panels
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="col-12">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="checkTangentLines" name="tangentLines"
+                  onchange="document.getElementById('lineLength').disabled = !this.checked;">
+                <label class="form-check-label" for="checkTangentLines">Extend skirt for tangent lines</label>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="lineLength" class="form-label">Line Length</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="lineLength" name="lineLength" value="" required
+                  disabled="true">
+                <div class="input-group-append">
+                  <div class="input-group-text">mm</div>
+                </div>
+                <div class="invalid-feedback">
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="form-label">Joint Style</div>
+            <div class="col-12 imradio_selector input-group">
+              <div class="col-4">
+                <input type="radio" id="radioBevel" name="jointStyle" value="selectBevel" />
+                <label for="radioBevel" class="imradio bevel"></label>
+              </div>
+              <div class="col-4">
+                <input type="radio" id="radioNone" name="jointStyle" value="selectNone" />
+                <label for="radioNone" class="imradio none"></label>
+              </div>
+              <div class="col-4">
+                <input type="radio" id="radioMitre" name="jointStyle" value="selectMitre" checked />
+                <label for="radioMitre" class="imradio mitre"></label>
+              </div>
+            </div>
+            <hr class="my-4">
+            <button class="w-100 btn btn-primary btn-lg" type="submit">Generate Pattern</button>
+        </form>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

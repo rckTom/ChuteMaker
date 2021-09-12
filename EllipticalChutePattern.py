@@ -38,24 +38,30 @@ class EllipticChutePattern(ChutePattern):
 
         return t
 
-    def _elliptic_integral(self, t):
-        return math.sqrt(self._a**2 * math.sin(t)**2 + self._b**2 * math.cos(t)**2)
+    def _elliptic_integral(self, ts):
+        func = lambda a,b,t: math.sqrt(a**2 * math.sin(t)**2 + b**2 * math.cos(t)**2)
+
+        return integrate.cumtrapz(x = ts, y = [func(self._a, self._b, t) for t in ts], initial=0)
 
     def _get_pattern_path(self):
-        tmin = -self._tangential_line_point()
-
+        tmin = 0
+        if self.tangent_lines:
+            tmin = -self._tangential_line_point()
+    
         if self.spill_hole:
             tmax = math.acos(self.spill_hole/(2*self._a))
         else:
             tmax = math.pi/2
+        
         n = 100
-
         ts = np.linspace(tmin, tmax, n)
+        
         x = [self._elliptic_x(t) for t in ts]
-        y = [self._elliptic_integral(t) for t in ts]
+
+        print(np.max(x))
 
         u = np.array([math.pi*xe for xe in x]) / self.num_panels
-        l = integrate.cumtrapz(y = y, x = ts, initial = 0)
+        l = self._elliptic_integral(ts)
 
         right_x = u
         right_y = l
@@ -73,8 +79,3 @@ class EllipticChutePattern(ChutePattern):
                 "top": zip(top_x, top_y),
                 "left" : zip(left_x, left_y),
                 "bottom": zip(bottom_x, bottom_y)}
-
-        # u = np.append(u, [-e for e in u[::-1]])
-        # l = np.append(l, [e for e in l[::-1]])
-
-        # return (u,l)

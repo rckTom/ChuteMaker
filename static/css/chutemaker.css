@@ -1,0 +1,34 @@
+.imradio_selector input{
+    margin:0;padding:0;
+    -webkit-appearance:none;
+       -moz-appearance:none;
+            appearance:none;
+}
+
+.bevel{background-image:url(/static/bevel_small.svg);}
+.none{background-image:url(/static/none_small.svg);}
+.mitre{background-image:url(/static/mitre_small.svg);}
+.imradio_selector input:active +.imradio{opacity: .9;}
+.imradio_selector input:checked +.imradio{
+    -webkit-filter: none;
+       -moz-filter: none;
+            filter: none;
+}
+.imradio{
+    cursor:pointer;
+    background-size:contain;
+    background-repeat:no-repeat;
+    display:inline-block;
+    width:100px;height:70px;
+    -webkit-transition: all 100ms ease-in;
+       -moz-transition: all 100ms ease-in;
+            transition: all 100ms ease-in;
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+.imradio:hover{
+    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+       -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+            filter: brightness(1.2) grayscale(.5) opacity(.9);
+}
