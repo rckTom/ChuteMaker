@@ -9,7 +9,7 @@
 
 <body class="bg-light">
   <div class="container">
-    <main class="row justify-content-center">
+    <main class="row justify-content-center py-3">
       <div class="col-lg-8 col-md-12 col-sm-12 justify-content-center">
         <h4 class="mb-3">Hemispherical Chute</h4>
         <form class="needs-validation" action="/spherical" method="post">
@@ -41,7 +41,7 @@
             <div class="col-12">
               <label for="sphericalExcentricity" class="form-label">Excentricity</label>
               <div class="input-group has-validation">
-                <input type="number" class="form-control" id="sphericalExcentricity" name="e" placeholder="" value="0.7"
+                <input type="number" class="form-control" id="sphericalExcentricity" name="e" placeholder="" value="0.7" min=0.01 max=0.99 step=0.01
                   required>
                 <div class="invalid-feedback">
                   Excentricity is required.
