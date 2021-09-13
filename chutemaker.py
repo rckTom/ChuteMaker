@@ -1,6 +1,5 @@
 from ChutePattern import MitreType
 import argparse
-import math
 
 import cairo
 import numpy as np

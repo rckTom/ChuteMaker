@@ -45,6 +45,7 @@ class EllipticChutePattern(ChutePattern):
 
     def _get_pattern_path(self):
         tmin = 0
+        
         if self.tangent_lines:
             tmin = -self._tangential_line_point()
     
