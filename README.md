@@ -1,5 +1,16 @@
+# About
+
+This software generates gore/panel patterns for spherical and toroidal parachutes. 
+
+#### Spherical Parachute:
+<img src="images/spherical_chute.png" alt="drawing" width="200"/>
+
+#### Toroidal Parachute:
+<img src="images/toroidal_chute.png" alt="drawing" width="200"/>
+
+
 # Usage
-To generate a elliptical parachute cutting pattern with 12 panela, a diameter of 0.5 m and a spill hole with 0.05 m diameter run the following command:
+To generate a elliptical parachute cutting pattern with 12 panels, a diameter of 0.5 m and a spill hole with 0.05 m diameter run the following command:
 
 ### Example
 `python chutemaker.py --grid --panels=12 --seam_allowance=10 --joint_style=miter spherical --diameter=500 --spill_diameter=100 pattern.pdf`
