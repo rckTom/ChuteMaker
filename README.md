@@ -3,10 +3,10 @@
 This software generates gore/panel patterns for spherical and toroidal parachutes. 
 
 #### Spherical Parachute:
-<img src="images/spherical_chute.png" alt="drawing" width="200"/>
+<img src="static/spherical_chute.png" alt="drawing" width="200"/>
 
 #### Toroidal Parachute:
-<img src="images/toroidal_chute.png" alt="drawing" width="200"/>
+<img src="static/toroidal_chute.png" alt="drawing" width="200"/>
 
 
 # Usage
