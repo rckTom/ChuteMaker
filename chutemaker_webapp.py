@@ -18,7 +18,6 @@ from CairoTiler import PAPER_SIZES, CairoTiler
 from flask import Flask, render_template, request, Response, send_file
 from util import mm_to_pt
 import cairo
-import flask
 import io
 from EllipticalChutePattern import EllipticChutePattern
 from ToroidalChutePattern import ToroidalChutePattern
@@ -62,10 +61,9 @@ def generatePDF(pattern, size, tiling=False, paper_size="A4", margin=10):
     return f
 
 
-@app.route("/spherical", methods=["POST"])
+@app.route("/generate", methods=["POST"])
 def spherical():
     if request.method == "POST":
-        print(request.form.keys())
         diameter = request.form.get("diameter")
         spill_diameter = request.form.get("spillDiameter")
         e = request.form.get("e")
@@ -79,7 +77,7 @@ def spherical():
         fileType = request.form.get("typeSelect")
         seamAllowance = request.form.get("seamAllowance")
         grid = request.form.get("grid")
-        print(fileType)
+        chute_type = request.form.get("type")
 
         if any(
                 v is None for v in
@@ -120,18 +118,31 @@ def spherical():
             jointStyle = MitreType.bevel
 
         try:
-            cp = EllipticChutePattern(
-                diameter,
-                panels,
-                e,
-                tangentLines,
-                line_length,
-                spill_diameter,
-                grid=grid,
-                seam_allowance=(seamAllowance, seamAllowance, seamAllowance,
-                                seamAllowance))
+            if chute_type == "hemispherical":
+                cp = EllipticChutePattern(
+                    diameter,
+                    panels,
+                    e,
+                    tangentLines,
+                    line_length,
+                    spill_diameter,
+                    grid=grid,
+                    seam_allowance=(seamAllowance, seamAllowance,
+                                    seamAllowance, seamAllowance))
+            elif chute_type == "toroidal":
+                cp = ToroidalChutePattern(
+                    diameter,
+                    panels,
+                    e,
+                    tangentLines,
+                    line_length,
+                    spill_diameter,
+                    grid,
+                    seam_allowance=(seamAllowance, seamAllowance,
+                                    seamAllowance, seamAllowance))
             cp.set_joint_style(jointStyle)
-        except:
+        except Exception as e:
+            print(e)
             return Response(status=502)
 
         pattern, size = cp.get_pattern()
@@ -142,50 +153,29 @@ def spherical():
             ext = ".svg"
         elif fileType == "pdf":
             f = generatePDF(pattern, size, tiling, paper_size, margin)
-            mime = "application.pdf"
+            mime = "application/pdf"
             ext = ".pdf"
         else:
             return Response(status=400)
 
         return send_file(f,
                          mimetype=mime,
-                         attachment_filename="spherical" + ext,
+                         download_name=chute_type + ext,
                          as_attachment=True)
-
-
-@app.route("/toroidal", methods=["POST"])
-def toroidal():
-    if request.method == "POST":
-        diameter = float(request.form.get("diameter"))
-        spill_diameter = float(request.form.get("spillDiameter"))
-        e = float(request.form.get("e"))
-        panels = int(request.form.get("panels"))
-        tangentLines = request.form.get("tangentLines")
-
-        if not tangentLines:
-            line_length = float(request.form.get("lineLength"))
-            tangentLines = True
-        else:
-            line_length = 2 * diameter
-            tangentLines = False
-
-        try:
-            cp = ToroidalChutePattern(diameter, panels, e, tangentLines,
-                                      line_length, spill_diameter)
-        except:
-            return Response(status=502)
-
-        pattern, size = cp.get_pattern()
-        svg = generateSVG(pattern, size)
-        return send_file(svg,
-                         mimetype="image/svg",
-                         attachment_filename="toroidal.svg",
-                         as_attachment=True)
-
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("selector.html")
+
+
+@app.route("/h")
+def hemisperhical_chute():
+    return render_template("hemispherical.html")
+
+
+@app.route("/t")
+def toroidal_chute():
+    return render_template("toroidal.html")
 
 
 if __name__ == "__main__":
