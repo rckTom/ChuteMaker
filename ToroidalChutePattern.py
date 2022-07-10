@@ -7,12 +7,34 @@ from ChutePattern import ChutePattern
 class ToroidalChutePattern(ChutePattern):
     def __init__(self, diameter, num_panels, e, tangent_lines=True, line_length = None, spill_hole_diameter = 0, grid=True, seam_allowance=(10,10,10,10)):
         self.line_length = line_length
+        self.diameter = diameter
+        self.spill_diamter = spill_hole_diameter
+        self.e = e
         self.r = diameter/4 * e
         self.rt = diameter/2 - self.r
         self.rs = spill_hole_diameter/2
         self.num_panels = num_panels
         self.tangent_lines = tangent_lines
         super().__init__(grid, seam_allowance)
+
+        # calculate line length
+        # y intersection point line B and C
+
+
+        self.line_lengths = dict()
+        self.line_lengths["A"] = self.line_length
+        self.line_lengths["B"] = 0
+        self.line_lengths["C"] = 0
+
+    def description(self):
+        return {
+            "diameter": self.diameter,
+            "panels": self.num_panels,
+            "spill hole diameter": self.rs * 2,
+            "form factor": self.e,
+            "line length": "n/a" if not self.tangent_lines else f"A: {self.line_length}, B: {0}, C {0}",
+            "seam allowance": self.seam_allowance
+        }
 
     def _t(self, x):
         return math.acos((x-self.rt)/self.r)
@@ -21,7 +43,7 @@ class ToroidalChutePattern(ChutePattern):
         return self.rt + math.cos(t) * self.r
 
     def _y(self, t):
-        return self.rt + math.sin(t) * self.r
+        return math.sin(t) * self.r
 
     def _tangential_line_point(self):
         l = self.line_length
@@ -44,13 +66,25 @@ class ToroidalChutePattern(ChutePattern):
         
         return rs
 
-    def _get_pattern_path(self):
+    def calc_line_lenghts(self):
         rs = self.get_spill_diameter()
 
         tmin = -self._tangential_line_point()
         tmax = self._t(rs)
-        n = 100
 
+        # calculate line length
+        # y intersection point line B and C
+
+    def _get_pattern_path(self):
+        rs = self.get_spill_diameter()
+
+        tmin = 0
+        
+        if self.tangent_lines:
+            tmin = -self._tangential_line_point()
+
+        tmax = self._t(rs)
+        n = 100
         ts = np.linspace(tmin, tmax, n)
         x = [self._x(t) for t in ts]
         l = [(t-tmin) * self.r for t in ts]

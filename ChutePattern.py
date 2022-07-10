@@ -97,6 +97,9 @@ class ChutePattern:
     def set_grid(self, grid):
         self.grid = grid
 
+    def description(self):
+        pass
+
     def _get_pattern_path(self):
         return (np.array([]), np.array([]))
 
@@ -126,6 +129,20 @@ class ChutePattern:
             coords.extend(coord)
 
         return spg.Polygon(coords)
+
+    def print_info(self, ctx):
+        font_size = 3
+        ctx.set_font_size(3)
+        ctx.set_source_rgba(0, 0, 0, 0.5)
+        lines = list()
+        for k, v in self.description().items():
+            lines.append(f"{k}: {v}")
+
+        y_pos = 10
+        for l in lines:
+            y_pos += font_size
+            ctx.move_to(10, y_pos)
+            ctx.show_text(l)
 
     def get_pattern(self):
         pattern_lines = self._get_pattern_path()
@@ -218,5 +235,6 @@ class ChutePattern:
         ctx.set_line_width(0.3)
         ctx.stroke()
         ctx.restore()
+        self.print_info(ctx)
         pattern = ctx.pop_group()
         return (pattern, (document_width, document_height))

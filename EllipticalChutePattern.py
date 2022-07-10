@@ -38,6 +38,16 @@ class EllipticChutePattern(ChutePattern):
 
         super().__init__(grid, seam_allowance)
 
+    def description(self):
+        return {
+            "diameter": self.diameter,
+            "panels": self.num_panels,
+            "spill hole diameter": self.spill_hole,
+            "excentricity": self._e,
+            "line length": "n/a" if not self.tangent_lines else self.line_length,
+            "seam allowance": self.seam_allowance
+        }
+
     def _elliptic_x(self, t):
         return self.radius * math.cos(t)
 
@@ -72,11 +82,7 @@ class EllipticChutePattern(ChutePattern):
         
         n = 100
         ts = np.linspace(tmin, tmax, n)
-        
         x = [self._elliptic_x(t) for t in ts]
-
-        print(np.max(x))
-
         u = np.array([math.pi*xe for xe in x]) / self.num_panels
         l = self._elliptic_integral(ts)
 
