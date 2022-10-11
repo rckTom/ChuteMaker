@@ -26,6 +26,10 @@ from ChutePattern import MitreType
 DEBUG = True
 app = Flask(__name__)
 
+STATIC_CONTEXT = {
+    "paper_sizes": PAPER_SIZES
+}
+
 
 def generateSVG(pattern, size):
     f = io.BytesIO()
@@ -165,17 +169,17 @@ def spherical():
 
 @app.route("/")
 def index():
-    return render_template("selector.html")
+    return render_template("selector.html", static = STATIC_CONTEXT)
 
 
 @app.route("/h")
 def hemisperhical_chute():
-    return render_template("hemispherical.html")
+    return render_template("hemispherical.html", static = STATIC_CONTEXT)
 
 
 @app.route("/t")
 def toroidal_chute():
-    return render_template("toroidal.html")
+    return render_template("toroidal.html", static = STATIC_CONTEXT)
 
 
 if __name__ == "__main__":

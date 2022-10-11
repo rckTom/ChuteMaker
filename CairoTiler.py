@@ -31,7 +31,28 @@ PAPER_SIZES = {
     "A7": (74, 105),
     "A8": (52, 74),
     "A9": (37, 52),
-    "A10": (26, 37)
+    "A10": (26, 37),
+    "Letter": (216, 279),
+    "Legal": (216, 356),
+    "Tabloid": (279, 432),
+    "Ledger": (432, 279),
+    "Junior Legal": (127, 203),
+    "Half Letter": (140, 216),
+    "Government Letter": (203, 267),
+    "Government Legal": (216, 330),
+    "ANSI A": (216, 279),
+    "ANSI B": (279, 432),
+    "ANSI C": (432, 559),
+    "ANSI D": (559, 864),
+    "ANSI E": (864, 1118),
+    "ARCH A": (229, 305),
+    "ARCH B": (305, 457),
+    "ARCH C": (457, 610),
+    "ARCH D": (610, 914),
+    "ARCH E": (914, 1219),
+    "ARCH E1": (762, 1067),
+    "ARCH E2": (660, 965),
+    "ARCH E3": (686, 991)
 }
 
 class CairoTiler:

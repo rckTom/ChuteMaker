@@ -141,19 +141,9 @@
               <div class="col-12 mb-3">
                 <label for="paperSize" class="form-label">Paper Size</label>
                 <select class="form-select" aria-label="Paper Size" id="paperSize" name="paperSize">
-                  <option value="4A0">4A0</option>
-                  <option value="2A0">2A0</option>
-                  <option value="A0">A0</option>
-                  <option value="A1">A1</option>
-                  <option value="A2">A2</option>
-                  <option value="A3">A3</option>
-                  <option value="A4" selected>A4</option>
-                  <option value="A5">A5</option>
-                  <option value="A6">A6</option>
-                  <option value="A7">A7</option>
-                  <option value="A8">A8</option>
-                  <option value="A9">A9</option>
-                  <option value="A10">A10</option>
+                  {% for paper_size in static.paper_sizes %}
+                  <option value="{{ paper_size }}" {% if paper_size == "A4"%}selected{% endif %}>{{ paper_size }}</option>
+                  {% endfor %}
                 </select>
               </div>
               <div class="input-group col-12 mb-3">
