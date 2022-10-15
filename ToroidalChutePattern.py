@@ -17,14 +17,9 @@ class ToroidalChutePattern(ChutePattern):
         self.tangent_lines = tangent_lines
         super().__init__(grid, seam_allowance)
 
-        # calculate line length
-        # y intersection point line B and C
-
-
         self.line_lengths = dict()
         self.line_lengths["A"] = self.line_length
-        self.line_lengths["B"] = 0
-        self.line_lengths["C"] = 0
+        self.calc_line_lenghts()
 
     def description(self):
         return {
@@ -32,7 +27,7 @@ class ToroidalChutePattern(ChutePattern):
             "panels": self.num_panels,
             "spill hole diameter": self.rs * 2,
             "form factor": self.e,
-            "line length": "n/a" if not self.tangent_lines else f"A: {self.line_length}, B: {0}, C {0}",
+            "line length": "n/a" if not self.tangent_lines else f"A: {self.line_length:.0f}, B: {self.line_lengths['B']:.0f}, C: {self.line_lengths['C']:.0f}",
             "seam allowance": self.seam_allowance
         }
 
@@ -67,13 +62,36 @@ class ToroidalChutePattern(ChutePattern):
         return rs
 
     def calc_line_lenghts(self):
+        la = 0
+        lb = 0
+
         rs = self.get_spill_diameter()
 
         tmin = -self._tangential_line_point()
         tmax = self._t(rs)
 
-        # calculate line length
-        # y intersection point line B and C
+        xa1 = self._x(tmin)
+        ya1 = self._y(tmin)
+        m = math.tan(tmin + math.pi/2)
+        xa2 = 0
+        ya2 = ya1 - m * xa1
+
+        print(f"A1: x {xa1}, y {ya1}")
+        print(f"A2: x {xa2}, y {ya2}")
+
+        if tmax < math.pi and tmax > math.pi/2:
+            xb1 = self._x(tmax)
+            yb1 = self._y(tmax)
+            m = math.tan(tmax - math.pi/2)
+
+            xb2 = 0
+            yb2 = yb1 - m * xb1
+
+            lb = math.sqrt((xb1 - xb2)**2 + (yb1 - yb2)**2)
+            lc = math.sqrt((yb2 - ya2)**2)
+
+        self.line_lengths["B"] = lb
+        self.line_lengths["C"] = lc
 
     def _get_pattern_path(self):
         rs = self.get_spill_diameter()
