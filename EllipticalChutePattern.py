@@ -67,19 +67,19 @@ class EllipticChutePattern(ChutePattern):
     def _elliptic_integral(self, ts):
         func = lambda a,b,t: math.sqrt(a**2 * math.sin(t)**2 + b**2 * math.cos(t)**2)
 
-        return integrate.cumtrapz(x = ts, y = [func(self._a, self._b, t) for t in ts], initial=0)
+        return integrate.cumulative_trapezoid(y = [func(self._a, self._b, t) for t in ts], x= ts, initial=0)
 
     def _get_pattern_path(self):
         tmin = 0
-        
+
         if self.tangent_lines:
             tmin = -self._tangential_line_point()
-    
+
         if self.spill_hole:
             tmax = math.acos(self.spill_hole/(2*self._a))
         else:
             tmax = math.pi/2
-        
+
         n = 100
         ts = np.linspace(tmin, tmax, n)
         x = [self._elliptic_x(t) for t in ts]
