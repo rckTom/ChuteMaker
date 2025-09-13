@@ -1,0 +1,6 @@
+numpy
+shapely
+flask
+pycairo
+scipy
+uwsgi
