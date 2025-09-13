@@ -58,12 +58,13 @@ class ToroidalChutePattern(ChutePattern):
             rs = self.rt
         else:
             rs = self.rs
-        
+
         return rs
 
     def calc_line_lenghts(self):
         la = 0
         lb = 0
+        lc = 0
 
         rs = self.get_spill_diameter()
 
@@ -97,7 +98,7 @@ class ToroidalChutePattern(ChutePattern):
         rs = self.get_spill_diameter()
 
         tmin = 0
-        
+
         if self.tangent_lines:
             tmin = -self._tangential_line_point()
 
