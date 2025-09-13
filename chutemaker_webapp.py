@@ -19,11 +19,12 @@ from flask import Flask, render_template, request, Response, send_file
 from util import mm_to_pt
 import cairo
 import io
+import os
 from EllipticalChutePattern import EllipticChutePattern
 from ToroidalChutePattern import ToroidalChutePattern
 from ChutePattern import MitreType
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG") is not None
 app = Flask(__name__)
 
 STATIC_CONTEXT = {
