@@ -110,6 +110,7 @@ class ChutePattern:
         offset_line = line.parallel_offset(seam_allowance, "right")
         coord = list(line.coords)
         coord1 = list(offset_line.coords)
+        coord1.reverse()
         coord.extend(coord1)
         seam = spg.Polygon(coord)
         return polygon.union(seam)
