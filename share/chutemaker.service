@@ -9,7 +9,8 @@ Type=simple
 User=chutemaker
 Group=chutemaker
 WorkingDirectory=/opt/chutemaker/
-ExecStart=/usr/bin/python3 chutemaker_webapp.py
+ExecStart=docker-compose up --clean-orphanes
+ExecStop=docker-compose down
 Restart=always
 
 [Install]

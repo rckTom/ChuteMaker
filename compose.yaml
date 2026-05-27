@@ -1,0 +1,10 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
