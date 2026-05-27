@@ -18,8 +18,6 @@ from ChutePattern import MitreType
 import argparse
 
 import cairo
-import numpy as np
-from numpy.lib.polynomial import poly
 
 import util
 from ToroidalChutePattern import ToroidalChutePattern

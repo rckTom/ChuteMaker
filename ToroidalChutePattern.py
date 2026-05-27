@@ -1,7 +1,5 @@
-import cairo
 import math
 import numpy as np
-import scipy.integrate as integrate
 from ChutePattern import ChutePattern
 
 class ToroidalChutePattern(ChutePattern):
